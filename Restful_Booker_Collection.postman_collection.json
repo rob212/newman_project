@@ -1,0 +1,268 @@
+{
+	"info": {
+		"_postman_id": "ad3741a1-435e-44ce-9d38-6ba346d55cce",
+		"name": "Restful_Booker_Collection",
+		"description": "Worked examples taken from Danny Daintons Tutorial Github pages:\n\nhttps://github.com/DannyDainton/All-Things-Postman\n\n\nThe API being tested is the Restful-Booker created by Mark Winteringham:\n\nhttps://restful-booker.herokuapp.com/",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Health check",
+			"description": "",
+			"item": [
+				{
+					"name": "GET ping",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "9efc9f75-0303-4c13-b054-8366a762febe",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('The ping endpoint returns a 200 status', function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('The ping endpoint should respond in under 7 seconds', function() {",
+									"    pm.expect(pm.response.responseTime).to.be.below(700);",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{baseURL}}/ping",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"ping"
+							]
+						},
+						"description": "a simple health check GET request to /ping endpoint"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Get all Requests",
+			"description": "",
+			"item": [
+				{
+					"name": "Get all bookings",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{baseURL}}/booking",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"booking"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get booking by name",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{baseURL}}/booking?lastname=brown",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"booking"
+							],
+							"query": [
+								{
+									"key": "lastname",
+									"value": "brown"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get booking by id",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "c4fe952f-66e1-4f46-8a55-4dd95ea64612",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"booking_id\", Math.floor((Math.random() * 10) + 1));",
+									"",
+									"pm.globals.set('new_global_number', 5555);",
+									"",
+									"const moment = require('moment');",
+									"console.log(`Timestamp: ${moment().valueOf()}`);",
+									"",
+									"const uuid = require('uuid');",
+									"console.log(`Guid: ${uuid()}`);",
+									"",
+									"const randomInt = Math.floor((Math.random() * 1000));",
+									"console.log(`Random number: ${randomInt}`);"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "71a5794e-f1a1-4420-a5f1-89ba4f17472d",
+								"type": "text/javascript",
+								"exec": [
+									"// All valid ways to check that the status code is 200",
+									"",
+									"pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));",
+									"",
+									"pm.test(\"Check the status code text string\", () => pm.response.to.have.status('OK'));",
+									"",
+									"pm.test(\"Check to preset status\", () => pm.response.to.be.ok);",
+									"",
+									"pm.test(\"Check the response code after extracting it\", () => pm.expect(pm.response.code).to.equal(200));",
+									"",
+									"// Check the header is in expected format",
+									"pm.test(\"Content-Type header is correct\", () => pm.response.to.have.header('Content-Type', 'application/json; charset=utf-8'));",
+									"",
+									"// Check the response returns in under 5 seconds ",
+									"pm.test('Response time in under 5 seconds', () => pm.expect(pm.response.responseTime).to.be.below(500));",
+									"",
+									"// validate the actual booking data types",
+									"pm.test('Response types are expected types', () => {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.firstname).to.be.a('string');",
+									"    pm.expect(jsonData.lastname).to.be.a('string');",
+									"    pm.expect(jsonData.totalprice).to.be.a('number');",
+									"    pm.expect(jsonData.depositpaid).to.be.a('boolean');",
+									"    pm.expect(jsonData.bookingdates.checkin).to.be.a('string');",
+									"    pm.expect(jsonData.bookingdates.checkin).to.match(/^\\d{4}-\\d{2}-\\d{2}$/);",
+									"    pm.expect(jsonData.bookingdates.checkout).to.be.a('string');",
+									"    pm.expect(jsonData.bookingdates.checkout).to.match(/^\\d{4}-\\d{2}-\\d{2}$/);",
+									"});",
+									"",
+									"// validate that the returned firstname is not longer than 20 characters",
+									"pm.test('Validate the firstname returned is not longer than 20 characters', () => {",
+									"  pm.expect(pm.response.json().firstname).length.to.be.at.most(20); ",
+									"});",
+									"",
+									"// validate optional paramaeter is present and if so check its type otherwise ignore",
+									"(pm.response.json().additionalneeds === undefined ? pm.test.skip : pm.test)('Check type of additional needs optional property', () => {",
+									"  pm.expect(pm.response.json().additionalneeds).to.be.a('string'); ",
+									"});",
+									"",
+									"",
+									"",
+									"// alternative syntax to the above to check optional properties",
+									"if (pm.response.json().additionalneeds === undefined) {",
+									"    pm.test.skip('Customer has no additional needs', () => {",
+									"        return;",
+									"    });",
+									"} else {",
+									"    pm.test('Customer additional needs is of expected type', () => {",
+									"        pm.expect(pm.response.json().additionalneeds).to.be.a('string');",
+									"    });",
+									"}",
+									"",
+									"// test the global variable that has been setup",
+									"pm.test('Confirm the global variable with value 5555 by the pre-request scripts exists', () => {",
+									"    pm.expect(5555).to.be.equal(parseInt(pm.globals.get('new_global_number')));",
+									"})"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{baseURL}}/booking/{{booking_id}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"booking",
+								"{{booking_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Post Requests",
+			"description": "",
+			"item": [
+				{
+					"name": "booking",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"firstname\": \"Sally\",\n  \"lastname\" : \"Brown\",\n  \"totalprice\" : 111,\n  \"depositpaid\" : true,\n  \"additionalneeds\" : \"Breakfast\",\n  \"bookingdates\" : {\n    \"checkin\" : \"2013-02-23\",\n    \"checkout\" : \"2014-10-23\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{baseURL}}/booking",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"booking"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "b3dfb646-6643-456d-9a0c-b6af20091cbc",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "ea98a942-7494-4513-a2d9-98a11c575788",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
