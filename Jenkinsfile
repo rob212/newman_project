@@ -8,13 +8,15 @@ pipeline {
         }
         stage("run newman") {
             steps {
-                sh "docker run --rm -t rob212/cop_newman run simple.postman_collection.json -e restful_booker.postman_environment.json -r html --reporter-html-export ../report/index.html"
-                 publishHTML (target: [
+                sh "docker run -t rob212/cop_newman run simple.postman_collection.json -e restful_booker.postman_environment.json -r html --reporter-html-export ../report/index.html"
+            }
+        }
+        stage("generate report") {
+             publishHTML (target: [
                     reportDir: 'report/',
                     reportFiles: 'index.html',
                     reportName: "Newman API Report"
                 ])
-            }
         }
     }
 }
