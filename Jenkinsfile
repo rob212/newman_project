@@ -14,7 +14,7 @@ pipeline {
         stage("generate report") {
             steps {
                 publishHTML (target: [
-                    reportDir: 'etc/newman/report',
+                    reportDir: 'etc/report',
                     reportFiles: 'index.html',
                     reportName: "Newman API Report"
                 ])
