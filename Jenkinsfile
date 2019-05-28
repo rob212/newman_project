@@ -12,11 +12,13 @@ pipeline {
             }
         }
         stage("generate report") {
-             publishHTML (target: [
+            steps {
+                publishHTML (target: [
                     reportDir: 'report/',
                     reportFiles: 'index.html',
                     reportName: "Newman API Report"
                 ])
+            }
         }
     }
 }
