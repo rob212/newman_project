@@ -8,7 +8,7 @@ pipeline {
         }
         stage("run newman") {
             steps {
-                sh "docker run -t rob212/cop_newman run simple.postman_collection.json"
+                sh "docker run -t rob212/cop_newman run simple.postman_collection.json -e restful_booker.postman_environment.json"
             }
         }
     }
