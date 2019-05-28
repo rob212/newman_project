@@ -1,5 +1,5 @@
 pipeline {
-    agent { docker { image 'postman/newman'}}
+    agent any
     stages {
         stage("run newman") {
             steps {
