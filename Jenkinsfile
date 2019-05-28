@@ -13,6 +13,7 @@ pipeline {
         }
         stage("generate report") {
             steps {
+                sh "ls -l"
                 publishHTML (target: [
                     reportDir: 'report',
                     reportFiles: 'index.html',
