@@ -13,7 +13,7 @@ pipeline {
         }
         stage("generate report") {
             steps {
-                sh "newman-reporter-html"
+                sh "cd data && ls -l"
                 publishHTML (target: [
                     reportDir: 'report',
                     reportFiles: 'index.html',
