@@ -1,0 +1,13 @@
+version: "2"
+services:
+  postman_checks:
+      container_name: restful_booker_checks
+      build: .
+      image: postman_checks
+      command:
+        run collections/simple.postman_collection.json
+        -e environments/restful_booker.postman_environment.json
+        -r html,cli
+        --reporter-html-export reports/index.html
+      volumes:
+        - ./src:/etc/newman
